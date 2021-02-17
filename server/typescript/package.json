@@ -1,0 +1,37 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "description": "This is a simple chat app system that allows users to chat with each other.",
+  "scripts": {
+    "test": "jest --detectOpenHandles --runInBand",
+    "build:ts": "tsc",
+    "prestart": "npm run start:services",
+    "start": "ts-node ./src/server.ts",
+    "prestart:dev": "npm run start:services",
+    "start:dev": "nodemon",
+    "start:services": "docker-compose up -d",
+    "lint": "eslint \"src/**/*.ts\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@typescript-eslint/eslint-plugin": "^4.15.1",
+    "@typescript-eslint/parser": "^4.15.1",
+    "apollo-server": "^2.21.0",
+    "eslint": "^7.20.0",
+    "graphql": "^15.5.0",
+    "nodemon": "^2.0.7",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.5"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^8.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.5.0"
+  }
+}
