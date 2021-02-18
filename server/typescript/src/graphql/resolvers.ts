@@ -6,10 +6,6 @@ import { Op } from 'sequelize'
 import User from '../models/User.model'
 import * as env from '../config/env.json'
 
-interface SequelizeError {
-  [key: string]: string
-}
-
 interface Error {
   [key: string]: string
 }
@@ -82,7 +78,8 @@ const resolvers = {
         const authenticated = await bcrypt.compare(password, user.password)
 
         if (!authenticated) {
-          throw new AuthenticationError('password is incorrect')
+          errors.password = 'password is incorrect'
+          throw new UserInputError('password is incorrect', { errors })
         }
         const token = jwt.sign({ email }, env.JWT_SECRET, { expiresIn: '1h' })
 
@@ -133,13 +130,13 @@ const resolvers = {
       } catch (err) {
         console.log(err)
         if (err.name === 'SequelizeUniqueConstraintError') {
-          err.errors.forEach(
-            (e: SequelizeError) =>
-              (errors[e.path] = `${e.path} is already taken`)
-          )
+          err.errors.forEach((e: Error) => {
+            const errorSource = e.path.split('.')[1]
+            return (errors[errorSource] = `${errorSource} is already taken`)
+          })
         } else if (err.name === 'SequelizeValidationError') {
           err.errors.forEach(
-            (e: SequelizeError) => (errors[e.path] = e.message)
+            (e: Error) => (errors[e.path.split('.')[1]] = e.message)
           )
         }
         throw new UserInputError('Bad Input', { errors })

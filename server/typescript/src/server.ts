@@ -3,10 +3,9 @@ import { ApolloServer } from 'apollo-server'
 import resolvers from './graphql/resolvers'
 import typeDefs from './graphql/typeDefs'
 import sequelize from './config/database.config'
-import User from './models/User.model'
 
 const MAX_RETRY = 20
-const { PORT = 3000 } = process.env
+const { PORT = 4000 } = process.env
 
 const server = new ApolloServer({
   typeDefs,
