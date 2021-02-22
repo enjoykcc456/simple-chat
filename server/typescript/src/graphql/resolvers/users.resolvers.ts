@@ -1,52 +1,26 @@
 import bcrypt from 'bcryptjs'
 import { UserInputError, AuthenticationError } from 'apollo-server'
-import jwt, { VerifyErrors } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { Op } from 'sequelize'
 
-import User from '../models/User.model'
-import * as env from '../config/env.json'
+import * as env from '../../config/env.json'
+import User from '../../models/User.model'
 
 interface Error {
   [key: string]: string
 }
 
-interface User {
-  username: string
-  password: string
-}
-
-interface DecodedToken {
-  email: string
-  iat: number
-  exp: number
-}
-
 // A map of functions which return data for the schema.
 const resolvers = {
   Query: {
-    getUsers: async (_: any, __: any, context: any) => {
+    getUsers: async (_: any, __: any, { user }: { user: any }) => {
       try {
-        let user: DecodedToken
-        if (context.req && context.req.headers.authorization) {
-          const token = context.req.headers.authorization.split('Bearer ')[1]
-          jwt.verify(
-            token,
-            env.JWT_SECRET,
-            (err: VerifyErrors, decodedToken: object) => {
-              if (err) {
-                throw new AuthenticationError('Unauthenticated')
-              }
-              user = decodedToken as DecodedToken
-            }
-          )
-        }
+        if (!user) throw new AuthenticationError('Unauthenticated')
 
-        if (user) {
-          const users = await User.findAll({
-            where: { email: { [Op.ne]: user.email } },
-          })
-          return users
-        }
+        const users = await User.findAll({
+          where: { email: { [Op.ne]: user.email } },
+        })
+        return users
       } catch (err) {
         console.log(err)
         throw err

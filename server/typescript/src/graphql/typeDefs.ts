@@ -8,9 +8,17 @@ const typeDefs = gql`
     createdAt: String!
     token: String
   }
+  type Message {
+    uuid: String!
+    content: String!
+    from: String!
+    to: String!
+    createdAt: String!
+  }
   type Query {
     getUsers: [User]!
     login(email: String!, password: String!): User!
+    getMessages(from: String!): [Message]!
   }
   type Mutation {
     registerUser(
@@ -19,6 +27,7 @@ const typeDefs = gql`
       password: String!
       confirmPassword: String!
     ): User!
+    sendMessage(content: String!, to: String!): Message!
   }
 `
 

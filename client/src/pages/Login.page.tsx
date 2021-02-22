@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
 import { Row, Col, Form, Button, Card } from 'react-bootstrap'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { Error } from './Register.page'
+import { useAuthDispatch, ActionKind } from '../context/auth.context'
 
 interface LoginVars {
   email: string
@@ -36,6 +37,7 @@ const LoginPage: React.FC<RouteComponentProps> = props => {
     password: '',
   })
   const [errors, setErrors] = useState<Error>({})
+  const dispatch: any = useAuthDispatch()
 
   const [login, { loading }] = useLazyQuery<LoginData, LoginVars>(LOGIN_USER, {
     onError: err => {
@@ -43,7 +45,7 @@ const LoginPage: React.FC<RouteComponentProps> = props => {
       setErrors(err.graphQLErrors[0].extensions?.errors)
     },
     onCompleted(data) {
-      localStorage.setItem('token', data.login.token)
+      dispatch({ type: ActionKind.Login, payload: data.login })
       props.history.push('/')
     },
   })

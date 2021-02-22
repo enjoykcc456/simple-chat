@@ -3,6 +3,7 @@ import { ApolloServer } from 'apollo-server'
 import resolvers from './graphql/resolvers'
 import typeDefs from './graphql/typeDefs'
 import sequelize from './config/database.config'
+import { contextMiddleware } from './utils/context.utils'
 
 const MAX_RETRY = 20
 const { PORT = 4000 } = process.env
@@ -10,13 +11,13 @@ const { PORT = 4000 } = process.env
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ctx => ctx,
+  context: contextMiddleware,
 })
 
 const startApplication = async (retryCount: number) => {
   try {
     await sequelize.authenticate()
-    await sequelize.sync({ force: true })
+    // await sequelize.sync({ force: true })
     server.listen(PORT).then(({ url }) => {
       console.log(`🚀 Server ready at ${url}`)
     })
