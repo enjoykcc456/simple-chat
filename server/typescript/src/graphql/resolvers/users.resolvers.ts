@@ -5,6 +5,7 @@ import { Op } from 'sequelize'
 
 import * as env from '../../config/env.json'
 import User from '../../models/User.model'
+import Message from '../../models/Message.model'
 
 interface Error {
   [key: string]: string
@@ -17,9 +18,23 @@ const resolvers = {
       try {
         if (!user) throw new AuthenticationError('Unauthenticated')
 
-        const users = await User.findAll({
+        let users = await User.findAll({
           where: { email: { [Op.ne]: user.email } },
         })
+
+        const allUserMessages = await Message.findAll({
+          where: { [Op.or]: [{ from: user.email }, { to: user.email }] },
+          order: [['createdAt', 'DESC']],
+        })
+
+        users = users.map((otherUser: any) => {
+          const latestMessage = allUserMessages.find(
+            (m: any) => m.from === otherUser.email || m.to === otherUser.email
+          )
+          otherUser.latestMessage = latestMessage
+          return otherUser
+        })
+
         return users
       } catch (err) {
         console.log(err)

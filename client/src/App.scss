@@ -1,6 +1,9 @@
 $blue: #166fe5;
 $green: #36a420;
 
+$paragraph-margin-bottom: 0;
+$gray-600: rgb(245, 245, 245);
+
 @import '~bootstrap/scss/bootstrap';
 
 body {
@@ -18,4 +21,8 @@ body {
   border: none;
   border-radius: 8px;
   box-shadow: 0 2px 4px RGB(0 0 0 / 10%), 0 8px 16px RGB(0 0 0 / 10%);
+}
+
+.user-div:hover {
+  background-color: rgb(250, 250, 250);
 }
